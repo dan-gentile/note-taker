@@ -7,16 +7,17 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(express.static('public'))
 
 
-const htmlRoutes = require('./public/routes/htmlRoutes.js');
+const htmlRoutes = require('./routes/htmlRoutes.js');
 app.use(htmlRoutes);
 
-const apiRoutes = require('./public/routes/apiRoutes.js');
+const apiRoutes = require('./routes/apiRoutes.js');
 app.use("/api", apiRoutes);
 
 
 
 app.listen(PORT, function() {
-    console.log("listenin on port " + PORT)
+    console.log("listening on port " + PORT)
 });

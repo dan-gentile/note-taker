@@ -4,60 +4,64 @@ const fs = require("fs");
 const router = express.Router();
 
 
-// reads files from the data base
-function readData() {
-    fs.readFile("db/db.json", "utf8", function(err, data) {
-        if (err) throw err;
+// display data on api/notes page
+router.get("/notes", function(req, res) {
+    // reads files from the database
+    const data = JSON.parse(fs.readFileSync("data/db.json", { encoding: 'utf8', flag: 'r' }));
 
-        if (data) {
-            // data received as a variable
-            const noteData = JSON.parse(data)
-
-            // display data on api/notes page
-            router.get("/notes", function(req, res) {
-                res.json(noteData);
-            });
-        } else {
-            router.get("/notes", function(req, res) {
-                res.send("no current data");
-            });
-        }
-
-    });
-};
+    // return
+    return res.json(data);
+});
 
 
 // POST route to add notes
-
-
 router.post("/notes", function(req, res) {
-    let inputData = JSON.stringify(req.body, null, 2);
-    let inputDataParse = JSON.parse(inputData)
+    // reads input data from page
+    const inputData = JSON.stringify(req.body, null, 2);
 
+    // parses the data 
+    const inputDataParse = JSON.parse(inputData);
 
-    fs.readFile("db/db.json", "utf8", function(err, data) {
-        if (err) throw err;
+    // reads files from the database 
+    const fileData = JSON.parse(fs.readFileSync("data/db.json", { encoding: 'utf8', flag: 'r' }));
 
-        let noteData = JSON.parse(data);
-        noteData.push(inputDataParse)
+    // pushes the input data to the database data
+    fileData.push(inputDataParse);
 
-        fs.writeFile("db/db.json", JSON.stringify(noteData, null, 2), function(err) {
-            if (err) throw err;
-        });
-
+    // adds a unique ID to each entry in the database and writes to the database
+    fileData.forEach((element, i) => {
+        element.id = i + 1;
+        fs.writeFileSync("data/db.json", JSON.stringify(fileData, null, 2));
     });
 
-
-    res.send("HELLO!")
-
+    // return
+    return res.send("success");
 });
+
 
 //DELETE rote to remove notes with the id delete
+router.delete("/notes/:id", function(req, res) {
+    // gets data from clicking the trash
+    const removeData = parseInt(req.params.id);
 
-router.delete("/notes", function(req, res) {
+    // read file from database
+    const deleteFileData = JSON.parse(fs.readFileSync("data/db.json", { encoding: 'utf8', flag: 'r' }));
 
+    // loops through the array
+    for (let i = 0; i < deleteFileData.length; i++) {
+        // if the id is equal to removeData remove delete item from array
+        if (deleteFileData[i].id === removeData) {
+            deleteFileData.splice(i, 1);
+        };
+    };
+
+    // rewrite the database with updated info
+    fs.writeFileSync("data/db.json", JSON.stringify(deleteFileData, null, 2));
+
+    // return
+    return res.send("delete");
 });
 
-readData()
+
 
 module.exports = router;

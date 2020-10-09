@@ -37,6 +37,7 @@ To use this app please go to the deployed link below:
 
 ## Screenshots 
 --Notes Page--
+
 <img width="695" alt="Screen Shot 2020-10-08 at 5 31 38 PM" src="https://user-images.githubusercontent.com/68626350/95528143-2671dd80-098c-11eb-83cf-ac4af2caf684.png">
 
 ## Code Snippets
